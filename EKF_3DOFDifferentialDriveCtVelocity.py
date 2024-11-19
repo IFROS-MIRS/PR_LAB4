@@ -53,42 +53,7 @@ class EKF_3DOFDifferentialDriveCtVelocity(GFLocalization, DR_3DOFDifferentialDri
         # TODO: To be completed by the student
 
         return zk, Rk, Hk, Vk
-    def GetMeasurements(self):  # override the observation model
-        """
 
-        :return:
-        """
-        zk = np.zeros((0, 1))  # empty vector
-        Rk = np.zeros((0, 0))  # empty matrix
-
-        self.yaw = False
-        self.vel = False
-
-        Hk, Vk = np.zeros((0,6)), np.zeros((0,0))
-        H_yaw, V_yaw = np.array([[0,0,1,0,0,0]]), np.eye(1)
-
-        z_yaw, sigma2_yaw = self.robot.ReadCompass()
-
-        if z_yaw.size>0:  # if there is a measurement
-            zk, Rk = np.block([[zk], [z_yaw]]), scipy.linalg.block_diag(Rk, sigma2_yaw)
-            Hk, Vk = np.block([[Hk], [H_yaw]]), scipy.linalg.block_diag(Vk, V_yaw)
-            self.yaw = True
-
-        n, Rn = self.robot.ReadEncoders(); L=0; R=1  # read sensors
-
-        if n.size>0:  # if there is a measurement
-            self.vel=True
-
-            H_n= np.array([[ 0,0,0,self.Kn_inv[0,0],0,self.Kn_inv[0,1]],
-                            [ 0,0,0,self.Kn_inv[1,0],0,self.Kn_inv[1,1]]])
-
-            zk, Rk = np.block([[zk], [n]]), scipy.linalg.block_diag(Rk, Rn)
-            Hk, Vk = np.block([[Hk], [H_n]]), scipy.linalg.block_diag(Vk, np.eye(2))
-
-        if zk.shape[0] == 0: # if there is no measurement
-            return np.zeros((1,0)), np.zeros((0,0)),np.zeros((1,0)), np.zeros((0,0))
-        else:
-            return zk, Rk, Hk, Vk
 
 if __name__ == '__main__':
 
